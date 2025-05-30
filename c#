@@ -1,0 +1,517 @@
+ADATOK
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+
+namespace adatok_graf
+{
+    public partial class MainWindow : Window
+    {
+        List<adatok> adatok = new List<adatok>();
+        public MainWindow()
+        {
+            InitializeComponent();
+            Random rnd = new Random();
+            string[] t = File.ReadAllLines("adatok.txt");
+            foreach (string s in t.Skip(1))
+            {
+                adatok.Add(new adatok(s));
+            }
+
+            var egyediTesi = adatok.Select(a => a.tesi).Distinct().ToList();
+            foreach (var s in egyediTesi)
+            {
+                tesi.Items.Add(s);
+            }
+            if (tesi.Items.Count > 0)
+            {
+                int index = rnd.Next(tesi.Items.Count); 
+                tesi.SelectedIndex = index;
+            }
+
+            var egyediMatek = adatok.Select(a => a.mat).Distinct().ToList();
+            foreach (var s in egyediMatek)
+            {
+                matek.Items.Add(s);
+            }
+            if (matek.Items.Count > 0)
+            {
+                int index = rnd.Next(matek.Items.Count);
+                matek.SelectedIndex = index;
+            }
+
+            var egyediAngol = adatok.Select(a => a.angol).Distinct().ToList();
+            foreach (var s in egyediAngol)
+            {
+                angol.Items.Add(s);
+            }
+            if (angol.Items.Count > 0)
+            {
+                int index = rnd.Next(angol.Items.Count);
+                angol.SelectedIndex = index;
+            }
+
+            var egyediNyelv = adatok.Select(a => a.nyelv).Distinct().ToList();
+            foreach (var s in egyediNyelv)
+            {
+                nyelv.Items.Add(s);
+            }
+            if (nyelv.Items.Count > 0)
+            {
+                int index = rnd.Next(nyelv.Items.Count);
+                nyelv.SelectedIndex = index;
+            }
+
+        }
+
+        private void felvesz_Click(object sender, RoutedEventArgs e)
+        {
+
+            if (string.IsNullOrWhiteSpace(nev.Text))
+            {
+                MessageBox.Show("Kérem irjon be egy nevet!");
+                return;
+            }
+
+            int ujId = adatok.Max(a => a.id) + 1;
+
+
+        }
+    }
+}
+
+<Window x:Class="adatok_graf.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:adatok_graf"
+        mc:Ignorable="d"
+        Title="Csoportok" Height="450" Width="800"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize">
+    <Grid>
+        <TextBox x:Name="nev" HorizontalAlignment="Left" Margin="96,31,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="188"/>
+        <Label Content="Diák neve" HorizontalAlignment="Left" Margin="25,23,0,0" VerticalAlignment="Top"/>
+        <Label Content="Testnevelés csoport:" HorizontalAlignment="Left" Margin="25,69,0,0" VerticalAlignment="Top"/>
+        <ComboBox x:Name="tesi" HorizontalAlignment="Left" Margin="152,73,0,0" VerticalAlignment="Top" Width="120"/>
+        <Label Content="Matematika csoport:" HorizontalAlignment="Left" Margin="25,116,0,0" VerticalAlignment="Top"/>
+        <ComboBox x:Name="matek" HorizontalAlignment="Left" Margin="152,120,0,0" VerticalAlignment="Top" Width="120"/>
+        <Label Content="Angol csoport:" HorizontalAlignment="Left" Margin="25,166,0,0" VerticalAlignment="Top"/>
+        <ComboBox x:Name="angol" HorizontalAlignment="Left" Margin="152,170,0,0" VerticalAlignment="Top" Width="120"/>
+        <Button x:Name="felvesz" Content="OK, felvétel" HorizontalAlignment="Left" Margin="480,177,0,0" VerticalAlignment="Top" Click="felvesz_Click"/>
+        <Label Content="2. idegen nyelv csopoert:" HorizontalAlignment="Left" Margin="25,233,0,0" VerticalAlignment="Top"/>
+        <ComboBox x:Name="nyelv" HorizontalAlignment="Left" Margin="186,235,0,0" VerticalAlignment="Top" Width="120"/>
+        <Label Content="Együtt élők száma:" HorizontalAlignment="Left" Margin="25,314,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="egyuttelok" HorizontalAlignment="Left" Margin="138,314,0,0" TextWrapping="Wrap" Text="4" VerticalAlignment="Top" Width="79" Height="33"/>
+        <Label Content="Testvérek száma:" HorizontalAlignment="Left" Margin="382,318,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="tesok" HorizontalAlignment="Left" Margin="504,318,0,0" TextWrapping="Wrap" Text="1" VerticalAlignment="Top" Width="79" Height="33"/>
+
+    </Grid>
+</Window>
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace adatok_graf
+{
+    internal class adatok
+    {
+        public int id;
+        public string nev;
+        public string mat;
+        public string angol;
+        public string nyelv;
+        public string tesi;
+        public int csaladszam;
+        public int tesoszam;
+
+        public adatok(string s)
+        {
+            string[] t = s.Split(';');
+            id = int.Parse(t[0]);
+            nev = t[1];
+            mat = t[2];
+            angol = t[3];
+            nyelv = t[4];
+            tesi = t[5];
+            csaladszam = int.Parse(t[6]);
+            tesoszam = int.Parse(t[7]);
+        }
+    }
+}
+
+BARLANGOK
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+
+namespace gyak_barlang_graf
+{
+    /// <summary>
+    /// Interaction logic for MainWindow.xaml
+    /// </summary>
+    public partial class MainWindow : Window
+    {
+        List<Barlang> barlangok = new List<Barlang>();
+        public MainWindow()
+        {
+            InitializeComponent();
+            string[] t = File.ReadAllLines("barlang.txt");
+            foreach (string s in t.Skip(1)) { barlangok.Add(new Barlang(s)); }
+
+            foreach (string s in barlangok.Select(a => a.telepules).Distinct().OrderBy(a => a))
+            {
+                telepulesek.Items.Add(s);
+            }
+        }
+
+        private void telepulesek_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var valasztott = telepulesek.SelectedItem.ToString();
+            barlangjai.Items.Clear();
+            foreach (var s in barlangok.Where(a => a.telepules == valasztott).Select(a => a.nev).Distinct().OrderBy(a => a))
+            {
+                barlangjai.Items.Add(s);
+            }
+        }
+
+        private void barlangjai_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var valasztott = barlangjai.SelectedItem.ToString();
+            var adatai = barlangok.FirstOrDefault(a => a.nev == valasztott);
+            adatok.Items.Add($"hossz: {adatai.hossz}m");
+            adatok.Items.Add($"kiterjedes: {adatai.kiterjesztes}m");
+            adatok.Items.Add($"magassag: {adatai.magassag}m");
+            adatok.Items.Add($"melyseg: {adatai.melyseg}m");
+        }
+
+        private void melyebbek_gomb_Click(object sender, RoutedEventArgs e)
+        {
+            var valasztott = barlangjai.SelectedItem.ToString();
+            var adatai = barlangok.FirstOrDefault(a => a.nev == valasztott);
+            var melyseg = adatai.melyseg;
+            melyebbek.Items.Clear();
+            foreach(var s in barlangok.Where(a => a.melyseg > melyseg)){
+                 melyebbek.Items.Add($"{s.nev} {s.telepules} {s.melyseg}");
+            }
+        }
+    }
+}
+
+<Window x:Class="gyak_barlang_graf.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:gyak_barlang_graf"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="13*"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Label Content="Települések:" HorizontalAlignment="Left" Margin="34,28,0,0" VerticalAlignment="Top"/>
+        <ComboBox x:Name="telepulesek" HorizontalAlignment="Left" Margin="124,32,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="telepulesek_SelectionChanged"/>
+        <Label Content="Kiválasztott települések barlangjai:" HorizontalAlignment="Left" Margin="426,41,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.541,-0.716"/>
+        <ListBox x:Name="barlangjai" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="426,67,21,220" SelectionChanged="barlangjai_SelectionChanged"/>
+        <Label Content="A kiválasztott barlang adatai:" HorizontalAlignment="Left" Margin="34,75,0,0" VerticalAlignment="Top" Width="150"/>
+        <Label Content="A kiválasztott barlang adatai:" HorizontalAlignment="Left" Height="25" Margin="55,163,0,0" VerticalAlignment="Top" Width="265"/>
+        <ListBox x:Name="adatok" HorizontalAlignment="Left" Height="94" Margin="34,185,0,0" VerticalAlignment="Top" Width="226" d:ItemsSource="{d:SampleData ItemCount=5}"/>
+        <Button x:Name="melyebbek_gomb" Content="Mutasd a mélyebbeket!" HorizontalAlignment="Left" Margin="71,325,0,0" VerticalAlignment="Top" Click="melyebbek_gomb_Click"/>
+        <ListBox x:Name="melyebbek" HorizontalAlignment="Left" Height="117" Margin="400,272,0,0" VerticalAlignment="Top" Width="296" d:ItemsSource="{d:SampleData ItemCount=5}"/>
+    </Grid>
+</Window>
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace gyak_barlang_graf
+{
+    internal class Barlang
+    {
+        public int id;
+        public string nev;
+        public double hossz;
+        public double kiterjesztes;
+        public double melyseg;
+        public double magassag;
+        public string telepules;
+
+        public Barlang(string s)
+        {
+            string[] t = s.Split('\t');
+            nev = t[0];
+            hossz = Double.Parse(t[1]);
+            kiterjesztes = Double.Parse(t[2]);
+            melyseg = Double.Parse(t[3]);
+            magassag = Double.Parse(t[4]);
+            telepules = t[5];
+        }
+    }
+}
+
+CONSOL CSOPORTOK
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Csoportok_konzol
+{
+    internal class Diak
+    {
+        public int Tanulokod { get; private set; }
+        public string Nev {  get; private set; }
+        public string Mat {  get; private set; }
+        public string Angol { get; private set; }
+        public string Ketnyelv { get; private set; }
+        public string Tesi { get; private set; }
+        public int Csaladszam { get; private set; }
+        public int Tesoszam { get; private set; }
+        public Diak(string sorok)
+        {
+            string[] adatok = sorok.Split(';');
+            Tanulokod = int.Parse(adatok[0]);
+            Nev = adatok[1];
+            Mat = adatok[2];
+            Angol = adatok[3];
+            Ketnyelv = adatok[4];
+            Tesi = adatok[5];
+            Csaladszam = int.Parse(adatok[6]);
+            Tesoszam = int.Parse(adatok[7]);
+        }
+        public void changeAngol(string uj)
+        {
+            Angol = uj;
+        }
+    }
+}
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.IO;
+
+namespace Csoportok_konzol
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            string[] sorok = File.ReadAllLines("adatok.txt");
+            List<Diak> diakok = new List<Diak>();
+            foreach (var diak in sorok.Skip(1)) { diakok.Add(new Diak(diak)); }
+
+            Console.WriteLine("1. feladat: Diákok száma: " + diakok.Count);
+
+            Console.WriteLine("2. feladat: Diákok, akiknek 1-nél több testvérük van: ");
+            var tobbTeso = diakok.Where(d => d.Tesoszam > 1).Select(d => d.Nev);
+            foreach (var d in tobbTeso) Console.WriteLine("\t" + d);
+
+            var masKulonbseg = diakok.Count(d => d.Csaladszam - d.Tesoszam != 3);
+            Console.WriteLine($"3. feladat: {masKulonbseg} családban nem 3 az együtt lakók és testvérek száma közötti különbség");
+
+            Console.WriteLine("4. feladat: A tanárváltásban érintett diákok:");
+            var valtozando = diakok.Where(d => d.Angol == "4. Kis").OrderBy(d => d.Nev);
+            foreach (var d in valtozando) Console.WriteLine("\t" + d.Nev);
+            foreach (var d in valtozando) diakok.First(i => i.Tanulokod == d.Tanulokod).changeAngol("4. Kun");
+
+            Console.WriteLine("5. feladat: Csoportosítás az angol nyelv szerint, ahol a 2. nyelv német");
+            var angolNemet = diakok
+                .GroupBy(d => d.Angol)
+                .Select(d => new
+                {
+                    Angol = d.Key,
+                    Nevek = diakok
+                        .Where(t => t.Angol == d.Key && t.Ketnyelv == "német")
+                        .Select(t => t.Nev)
+                        .OrderBy(t => t)
+                        .ToList()
+                })
+                .OrderBy(d => d.Angol)
+            ;
+            foreach (var d in angolNemet)
+            {
+                Console.WriteLine("\t" + d.Angol);
+                foreach (var nev in d.Nevek) Console.WriteLine("\t\t" + nev);
+            }
+
+            var hatIzsak = diakok.First(d => d.Nev == "Hát Izsák");
+            Console.WriteLine("6. feladat: Hát Izsák adatai:\n" +
+                $"\tkód: {hatIzsak.Tanulokod}\n" +
+                $"\tmat: {hatIzsak.Mat}\n" +
+                $"\tangol: {hatIzsak.Angol}\n" +
+                $"\t2nyelv: {hatIzsak.Ketnyelv}\n" +
+                $"\tcsaládszám: {hatIzsak.Csaladszam}\n" +
+                $"\ttesószám: {hatIzsak.Tesoszam}\n");
+
+            Console.WriteLine("7. feladat: Akik minden csoportban együtt járnak Hát Izsákkal:");
+            var egyuttJar = diakok.Where(d =>
+                d.Mat == hatIzsak.Mat &&
+                d.Ketnyelv == hatIzsak.Ketnyelv &&
+                d.Angol == hatIzsak.Angol &&
+                d.Tesi == hatIzsak.Tesi &&
+                d.Nev != hatIzsak.Nev
+            );
+            foreach (var d in egyuttJar) Console.WriteLine("\t" + d.Nev);
+        }
+    }
+}
+
+CONSOL BARLANGOK
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace barlangos
+{
+    internal class barlang
+    {
+        public int id;
+        public string nev;
+        public double hossz;
+        public double kiterjesztes;
+        public double melyseg;
+        public double magassag;
+        public string telepules;
+
+        public barlang(string s)
+        {
+            string[] t = s.Split('\t');
+            nev = t[0];
+            hossz = Double.Parse(t[1]);
+            kiterjesztes = Double.Parse(t[2]);
+            melyseg = Double.Parse(t[3]);
+            magassag = Double.Parse(t[4]);
+            telepules = t[5];
+        }
+    }
+}
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.IO;
+
+namespace barlangos
+{
+    internal class Program
+    {
+
+        List<barlang> barlangok = new List<barlang>();
+
+        void felolvas()
+        {
+            string[] t = File.ReadAllLines("barlang.txt");
+            foreach( string s in t.Skip(1))
+            {
+                barlangok.Add(new barlang(s));
+            }
+        }
+        void f1()
+        {
+            Console.WriteLine("1. feladat: barlangok száma: " + barlangok.Count);
+        }
+
+        void f2()
+        {
+            Console.WriteLine("2. feladat: 100 m-nél mélyebb barlangok:" );
+            var melyebbBarlang = barlangok.Where(a => a.melyseg > 100).Select(b => b.nev);
+            foreach(var s in melyebbBarlang) Console.WriteLine("\t" + s);
+        }
+
+        void f3()
+        {
+            Console.WriteLine("3. feladat: Régies nevű barlangok: ");
+            var regies = barlangok.Where(a => a.nev.Contains("zsomboly") || a.nev.Contains("lik")).Select(a => a.nev);
+            foreach(var s in regies) Console.WriteLine("\t" + s);
+        }
+
+        void f4()
+        {
+            Console.WriteLine("4. feladat: a barlangok száma településenként: ");
+            var telepulesenkent = barlangok.GroupBy(a => a.telepules).Select(g => new
+            {
+                g.Key,
+                db = barlangok.Where(a => a.telepules == g.Key).Count()
+            }).OrderByDescending(a => a.db);
+            foreach(var s in telepulesenkent) Console.WriteLine("\t" + s.Key + s.db);
+        }
+
+        void f5()
+        {
+            var leghosszabb = barlangok.OrderByDescending(a => a.hossz).FirstOrDefault();
+            if (leghosszabb != null) Console.WriteLine($"5. feladat: a leghosszabb barlang: {leghosszabb.nev} {leghosszabb.hossz:n0} méter. \n");
+        }
+
+        void f6()
+        {
+            var fecskelyuk = barlangok.FirstOrDefault(a => a.nev == "Fecske-lyuk");
+            Console.WriteLine($"6. feladat: A {fecskelyuk.nev} települése: ");
+            var bigyo = barlangok.Where(a => a.telepules == fecskelyuk.telepules);
+            foreach( var s in bigyo) Console.WriteLine($"{s.telepules}; a barlangok: {s.kiterjesztes} méter");
+        }
+
+        void f7()
+        {
+            Console.WriteLine($"7. feladat: Ahol a barlangok magassága ás mélység különbsége max. 1 m:");
+            var kulonleges = barlangok.Where(a => Math.Abs(a.magassag - a.melyseg) <= 1 && a.melyseg > 0);
+            foreach (var s in kulonleges) Console.WriteLine($"- {s.nev} magasság: {s.magassag}m, mélység {s.melyseg}m");
+        }
+
+        Program() { 
+            felolvas();
+            f1 ();
+            f2();
+            f3();
+            f4();
+            f5 ();
+            f6();
+            f7();
+        }
+
+        static void Main(string[] args)
+        {
+            new Program();
+            Console.ReadKey();
+        }
+    }
+}
+
